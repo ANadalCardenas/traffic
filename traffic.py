@@ -21,7 +21,6 @@ def main():
 
     # Get image arrays and labels for all image files
     images, labels = load_data(sys.argv[1])
-
     # Split data into training and testing sets
     labels = tf.keras.utils.to_categorical(labels)
     x_train, x_test, y_train, y_test = train_test_split(
@@ -42,7 +41,7 @@ def main():
         filename = sys.argv[2]
         model.save(filename)
         print(f"Model saved to {filename}.")
-
+    
 
 def load_data(data_dir):
     """
@@ -58,8 +57,22 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    raise NotImplementedError
+    images = []
+    labels = []
+    for subdir in os.listdir(data_dir):
+        path = os.path.join(data_dir, subdir)
+        if os.path.isdir(path):
+            for file in os.listdir(path):
+                filepath = os.path.join(path, file)
+                image = cv2.imread(filepath)
+                image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
+                try:
+                    labels.append(int(subdir))
+                    images.append(image)
+                except ValueError:
+                    pass
 
+    return images, labels
 
 def get_model():
     """
